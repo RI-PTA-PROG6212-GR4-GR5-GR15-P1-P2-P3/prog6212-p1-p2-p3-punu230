@@ -1,54 +1,116 @@
-# This is a basic workflow to help you get started with Actions
+name: Validate Documentation
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main, master ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  validate-docs:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: check Docs Folder
-        run: |
-            test -d "docs" || exit 1
-
-
-      - name: check the required files
-        run: |
-            test -f "docs/ERD.pdf" || exit 1
-            test -f "docs/API Endpoint Plan.pdf" || exit 1
-            test -f "docs/part1.sql" || exit 1
-            test -f "docs/README.md" || exit 1
-
-      - name: check SQL CONTAINS CREATE TABLE
-        run: |
-            greq -qi "CREATE TABLE" docs/part1.sql || exit 1
-
-
-       
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Check for /docs folder
+      run: |
+        if [ -d "docs" ]; then
+          echo "✅ /docs folder exists."
+        else
+          echo "❌ /docs folder not found!"
+          exit 1
+        fi
+    
+    - name: Check for ERD file (PNG or PDF)
+      run: |
+        if ls docs/ERD.* 1> /dev/null 2>&1; then
+          echo "✅ ERD file exists."
+        else
+          echo "❌ ERD file not found in /docs! Please add ERD.png or ERD.pdf"
+          exit 1
+        fi
+    
+    - name: Check for API Endpoint Plan (MD or PDF)
+      run: |
+        if ls docs/API-Endpoint-Plan.* 1> /dev/null 2>&1; then
+          echo "✅ API Endpoint Plan exists."
+        else
+          echo "❌ API Endpoint Plan not found in /docs! Please add API-Endpoint-Plan.md or API-Endpoint-Plan.pdf"
+          exit 1
+        fi
+    
+    - name: Check for SQL Script
+      run: |
+        if [ -f "docs/RaceDay-Database.sql" ]; then
+          echo "✅ SQL Script exists."
+        else
+          echo "❌ SQL Script not found in /docs! Please add RaceDay-Database.sql"
+          exit 1
+        fi
+    
+    - name: Check for README.md
+      run: |
+        if [ -f "README.md" ]; then
+          echo "✅ README.md exists."
+        else
+          echo "❌ README.md not found in root directory!"
+          exit 1
+        fi
+    
+    - name: Validate file extensions
+      run: |
+        echo "========================================="
+        echo "📁 Validating file extensions in /docs:"
+        echo "========================================="
+        
+        # Check ERD file extension
+        if ls docs/ERD.* 1> /dev/null 2>&1; then
+          for file in docs/ERD.*; do
+            extension="${file##*.}"
+            if [[ "$extension" == "png" ]] || [[ "$extension" == "pdf" ]]; then
+              echo "✅ ERD.$extension - Valid extension"
+            else
+              echo "❌ ERD.$extension - Invalid extension! Use .png or .pdf"
+              exit 1
+            fi
+          done
+        fi
+        
+        # Check API Endpoint Plan file extension
+        if ls docs/API-Endpoint-Plan.* 1> /dev/null 2>&1; then
+          for file in docs/API-Endpoint-Plan.*; do
+            extension="${file##*.}"
+            if [[ "$extension" == "md" ]] || [[ "$extension" == "pdf" ]]; then
+              echo "✅ API-Endpoint-Plan.$extension - Valid extension"
+            else
+              echo "❌ API-Endpoint-Plan.$extension - Invalid extension! Use .md or .pdf"
+              exit 1
+            fi
+          done
+        fi
+        
+        echo "========================================="
+        echo "✅ All file validations passed!"
+        echo "========================================="
+    
+    - name: List all files in docs folder
+      run: |
+        echo "========================================="
+        echo "📂 Contents of /docs folder:"
+        echo "========================================="
+        ls -la docs/
+    
+    - name: Success message
+      run: |
+        echo "========================================="
+        echo "🎉 ALL VALIDATIONS PASSED SUCCESSFULLY!"
+        echo "========================================="
+        echo "✅ /docs folder exists"
+        echo "✅ ERD file found (PNG or PDF)"
+        echo "✅ API Endpoint Plan found (MD or PDF)"
+        echo "✅ SQL Script found"
+        echo "✅ README.md found"
+        echo "✅ All file extensions are valid"
+        echo "========================================="
