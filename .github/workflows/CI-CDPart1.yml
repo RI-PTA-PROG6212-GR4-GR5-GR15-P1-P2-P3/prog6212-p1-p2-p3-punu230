@@ -1,4 +1,4 @@
-name: Validate Documentation
+name: CI/CD Part 1 - Validate Documentation
 
 on:
   push:
@@ -12,7 +12,8 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      # Updated from v3 to v4 to fix Node.js compatibility
     
     - name: Check for /docs folder
       run: |
@@ -22,33 +23,40 @@ jobs:
           echo "❌ /docs folder not found!"
           exit 1
         fi
+      shell: bash
     
     - name: Check for ERD file (PNG or PDF)
       run: |
-        if ls docs/ERD.* 1> /dev/null 2>&1; then
+        if [ -f "docs/ERD.png" ] || [ -f "docs/ERD.pdf" ]; then
           echo "✅ ERD file exists."
         else
-          echo "❌ ERD file not found in /docs! Please add ERD.png or ERD.pdf"
+          echo "❌ ERD file not found in /docs!"
+          echo "Expected: docs/ERD.png or docs/ERD.pdf"
           exit 1
         fi
+      shell: bash
     
     - name: Check for API Endpoint Plan (MD or PDF)
       run: |
-        if ls docs/API-Endpoint-Plan.* 1> /dev/null 2>&1; then
+        if [ -f "docs/API-Endpoint-Plan.md" ] || [ -f "docs/API-Endpoint-Plan.pdf" ]; then
           echo "✅ API Endpoint Plan exists."
         else
-          echo "❌ API Endpoint Plan not found in /docs! Please add API-Endpoint-Plan.md or API-Endpoint-Plan.pdf"
+          echo "❌ API Endpoint Plan not found in /docs!"
+          echo "Expected: docs/API-Endpoint-Plan.md or docs/API-Endpoint-Plan.pdf"
           exit 1
         fi
+      shell: bash
     
     - name: Check for SQL Script
       run: |
         if [ -f "docs/RaceDay-Database.sql" ]; then
           echo "✅ SQL Script exists."
         else
-          echo "❌ SQL Script not found in /docs! Please add RaceDay-Database.sql"
+          echo "❌ SQL Script not found in /docs!"
+          echo "Expected: docs/RaceDay-Database.sql"
           exit 1
         fi
+      shell: bash
     
     - name: Check for README.md
       run: |
@@ -58,51 +66,22 @@ jobs:
           echo "❌ README.md not found in root directory!"
           exit 1
         fi
-    
-    - name: Validate file extensions
-      run: |
-        echo "========================================="
-        echo "📁 Validating file extensions in /docs:"
-        echo "========================================="
-        
-        # Check ERD file extension
-        if ls docs/ERD.* 1> /dev/null 2>&1; then
-          for file in docs/ERD.*; do
-            extension="${file##*.}"
-            if [[ "$extension" == "png" ]] || [[ "$extension" == "pdf" ]]; then
-              echo "✅ ERD.$extension - Valid extension"
-            else
-              echo "❌ ERD.$extension - Invalid extension! Use .png or .pdf"
-              exit 1
-            fi
-          done
-        fi
-        
-        # Check API Endpoint Plan file extension
-        if ls docs/API-Endpoint-Plan.* 1> /dev/null 2>&1; then
-          for file in docs/API-Endpoint-Plan.*; do
-            extension="${file##*.}"
-            if [[ "$extension" == "md" ]] || [[ "$extension" == "pdf" ]]; then
-              echo "✅ API-Endpoint-Plan.$extension - Valid extension"
-            else
-              echo "❌ API-Endpoint-Plan.$extension - Invalid extension! Use .md or .pdf"
-              exit 1
-            fi
-          done
-        fi
-        
-        echo "========================================="
-        echo "✅ All file validations passed!"
-        echo "========================================="
+      shell: bash
     
     - name: List all files in docs folder
       run: |
         echo "========================================="
         echo "📂 Contents of /docs folder:"
         echo "========================================="
-        ls -la docs/
+        if [ -d "docs" ]; then
+          ls -la docs/
+        else
+          echo "docs folder does not exist!"
+          exit 1
+        fi
+      shell: bash
     
-    - name: Success message
+    - name: Validation Summary
       run: |
         echo "========================================="
         echo "🎉 ALL VALIDATIONS PASSED SUCCESSFULLY!"
@@ -110,7 +89,8 @@ jobs:
         echo "✅ /docs folder exists"
         echo "✅ ERD file found (PNG or PDF)"
         echo "✅ API Endpoint Plan found (MD or PDF)"
-        echo "✅ SQL Script found"
+        echo "✅ SQL Script found (RaceDay-Database.sql)"
         echo "✅ README.md found"
-        echo "✅ All file extensions are valid"
+        echo "========================================="
+      shell: bashs are valid"
         echo "========================================="
