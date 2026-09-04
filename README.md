@@ -1,5 +1,8 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/mr-hqvA6)
 
+<img width="1285" height="472" alt="Screenshot 2026-09-04 093708" src="https://github.com/user-attachments/assets/cd5d03aa-56bc-417f-acf6-d1a040bc38ae" />
+
+
 # RaceDay System
 
 A full-stack web-based event management system designed for the South African road running, walking, and cycling community.
