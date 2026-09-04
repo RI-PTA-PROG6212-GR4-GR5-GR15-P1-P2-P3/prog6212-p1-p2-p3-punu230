@@ -57,9 +57,9 @@ jobs:
       
       - name: List docs folder contents
         run: |
-          echo "📂 Contents of /docs:"
+          echo "Contents of /docs:"
           ls -la docs/
-          echo ""
+          
       
       - name: Final success message
         run: |
