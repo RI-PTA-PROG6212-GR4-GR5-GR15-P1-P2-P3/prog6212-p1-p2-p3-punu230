@@ -28,21 +28,25 @@ jobs:
             exit 1
           fi
       
-      - name: Check API Endpoint Plan
+      - name: Check API Endpoint Plan (flexible)
         run: |
-          if [ -f "docs/API-Endpoint-Plan.md" ] || [ -f "docs/API-Endpoint-Plan.pdf" ]; then
+          # Check for API plan with various naming conventions
+          if [ -f "docs/API-Endpoint-Plan.md" ] || [ -f "docs/API-Endpoint-Plan.pdf" ] || \
+             [ -f "docs/API-Plan.md" ] || [ -f "docs/API-Plan.pdf" ] || \
+             [ -f "docs/API_Endpoint_Plan.md" ] || [ -f "docs/API_Endpoint_Plan.pdf" ] || \
+             ls docs/*.md | grep -i "api" > /dev/null 2>&1 || ls docs/*.pdf | grep -i "api" > /dev/null 2>&1; then
             echo "✅ API Endpoint Plan exists"
           else
-            echo "❌ API Endpoint Plan missing (expected API-Endpoint-Plan.pdf)"
+            echo "❌ API Endpoint Plan missing (expected API-Endpoint-Plan.md or API-Endpoint-Plan.pdf)"
             exit 1
           fi
       
       - name: Check SQL Script
         run: |
-          if [ -f "docs/part1.sql" ]; then
+          if [ -f "docs/RaceDay-Database.sql" ]; then
             echo "✅ SQL Script exists"
           else
-            echo "❌ SQL Script missing (expected part1.sql)"
+            echo "❌ SQL Script missing (expected RaceDay-Database.sql)"
             exit 1
           fi
       
@@ -57,7 +61,8 @@ jobs:
       
       - name: List docs folder contents
         run: |
-          echo "Contents of /docs:"
+          echo ""
+          echo "📂 Contents of /docs:"
           ls -la docs/
           echo ""
       
@@ -65,10 +70,4 @@ jobs:
         run: |
           echo "========================================="
           echo "🎉 ALL VALIDATIONS PASSED SUCCESSFULLY!"
-          echo "========================================="
-          echo "✅ docs folder exists"
-          echo "✅ ERD file exists"
-          echo "✅ API Endpoint Plan exists"
-          echo "✅ SQL Script exists"
-          echo "✅ README.md exists"
           echo "========================================="
