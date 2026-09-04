@@ -1,96 +1,55 @@
 name: CI/CD Part 1 - Validate Documentation
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
   validate-docs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      # Updated from v3 to v4 to fix Node.js compatibility
-    
-    - name: Check for /docs folder
-      run: |
-        if [ -d "docs" ]; then
-          echo "✅ /docs folder exists."
-        else
-          echo "❌ /docs folder not found!"
-          exit 1
-        fi
-      shell: bash
-    
-    - name: Check for ERD file (PNG or PDF)
-      run: |
-        if [ -f "docs/ERD.png" ] || [ -f "docs/ERD.pdf" ]; then
-          echo "✅ ERD file exists."
-        else
-          echo "❌ ERD file not found in /docs!"
-          echo "Expected: docs/ERD.png or docs/ERD.pdf"
-          exit 1
-        fi
-      shell: bash
-    
-    - name: Check for API Endpoint Plan (MD or PDF)
-      run: |
-        if [ -f "docs/API-Endpoint-Plan.md" ] || [ -f "docs/API-Endpoint-Plan.pdf" ]; then
-          echo "✅ API Endpoint Plan exists."
-        else
-          echo "❌ API Endpoint Plan not found in /docs!"
-          echo "Expected: docs/API-Endpoint-Plan.md or docs/API-Endpoint-Plan.pdf"
-          exit 1
-        fi
-      shell: bash
-    
-    - name: Check for SQL Script
-      run: |
-        if [ -f "docs/RaceDay-Database.sql" ]; then
-          echo "✅ SQL Script exists."
-        else
-          echo "❌ SQL Script not found in /docs!"
-          echo "Expected: docs/RaceDay-Database.sql"
-          exit 1
-        fi
-      shell: bash
-    
-    - name: Check for README.md
-      run: |
-        if [ -f "README.md" ]; then
-          echo "✅ README.md exists."
-        else
-          echo "❌ README.md not found in root directory!"
-          exit 1
-        fi
-      shell: bash
-    
-    - name: List all files in docs folder
-      run: |
-        echo "========================================="
-        echo "📂 Contents of /docs folder:"
-        echo "========================================="
-        if [ -d "docs" ]; then
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Validate required files exist
+        run: |
+          # Check docs folder
+          if [ ! -d "docs" ]; then
+            echo "❌ docs folder missing"
+            exit 1
+          fi
+          echo "✅ docs folder exists"
+          
+          # Check ERD
+          if [ ! -f "docs/ERD.png" ] && [ ! -f "docs/ERD.pdf" ]; then
+            echo "❌ ERD file missing (expected ERD.png or ERD.pdf)"
+            exit 1
+          fi
+          echo "✅ ERD file exists"
+          
+          # Check API Endpoint Plan
+          if [ ! -f "docs/API-Endpoint-Plan.md" ] && [ ! -f "docs/API-Endpoint-Plan.pdf" ]; then
+            echo "❌ API Endpoint Plan missing (expected API-Endpoint-Plan.md or API-Endpoint-Plan.pdf)"
+            exit 1
+          fi
+          echo "✅ API Endpoint Plan exists"
+          
+          # Check SQL Script
+          if [ ! -f "docs/RaceDay-Database.sql" ]; then
+            echo "❌ SQL Script missing (expected RaceDay-Database.sql)"
+            exit 1
+          fi
+          echo "✅ SQL Script exists"
+          
+          # Check README
+          if [ ! -f "README.md" ]; then
+            echo "❌ README.md missing"
+            exit 1
+          fi
+          echo "✅ README.md exists"
+          
+          # List all files
+          echo ""
+          echo "📂 Contents of /docs:"
           ls -la docs/
-        else
-          echo "docs folder does not exist!"
-          exit 1
-        fi
-      shell: bash
-    
-    - name: Validation Summary
-      run: |
-        echo "========================================="
-        echo "🎉 ALL VALIDATIONS PASSED SUCCESSFULLY!"
-        echo "========================================="
-        echo "✅ /docs folder exists"
-        echo "✅ ERD file found (PNG or PDF)"
-        echo "✅ API Endpoint Plan found (MD or PDF)"
-        echo "✅ SQL Script found (RaceDay-Database.sql)"
-        echo "✅ README.md found"
-        echo "========================================="
-      shell: bashs are valid"
-        echo "========================================="
+          echo ""
+          echo "🎉 All required files present!"
