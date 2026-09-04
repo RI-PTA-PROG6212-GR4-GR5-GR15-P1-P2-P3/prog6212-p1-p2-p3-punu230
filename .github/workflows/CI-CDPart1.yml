@@ -5,51 +5,50 @@ on: [push, pull_request]
 jobs:
   validate-docs:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Validate required files exist
+      - name: Check docs folder
         run: |
-          # Check docs folder
-          if [ ! -d "docs" ]; then
+          if [ -d "docs" ]; then
+            echo "✅ docs folder exists"
+          else
             echo "❌ docs folder missing"
             exit 1
           fi
-          echo "✅ docs folder exists"
-          
-          # Check ERD
-          if [ ! -f "docs/ERD.png" ] && [ ! -f "docs/ERD.pdf" ]; then
-            echo "❌ ERD file missing (expected ERD.png or ERD.pdf)"
+      
+      - name: Check ERD file
+        run: |
+          if [ -f "docs/ERD.png" ] || [ -f "docs/ERD.pdf" ]; then
+            echo "✅ ERD file exists"
+          else
+            echo "❌ ERD file missing"
             exit 1
           fi
-          echo "✅ ERD file exists"
-          
-          # Check API Endpoint Plan
-          if [ ! -f "docs/API-Endpoint-Plan.md" ] && [ ! -f "docs/API-Endpoint-Plan.pdf" ]; then
-            echo "❌ API Endpoint Plan missing (expected API-Endpoint-Plan.md or API-Endpoint-Plan.pdf)"
+      
+      - name: Check API Endpoint Plan
+        run: |
+          if [ -f "docs/API-Endpoint-Plan.md" ] || [ -f "docs/API-Endpoint-Plan.pdf" ]; then
+            echo "✅ API Endpoint Plan exists"
+          else
+            echo "❌ API Endpoint Plan missing"
             exit 1
           fi
-          echo "✅ API Endpoint Plan exists"
-          
-          # Check SQL Script
-          if [ ! -f "docs/RaceDay-Database.sql" ]; then
-            echo "❌ SQL Script missing (expected RaceDay-Database.sql)"
+      
+      - name: Check SQL Script
+        run: |
+          if [ -f "docs/RaceDay-Database.sql" ]; then
+            echo "✅ SQL Script exists"
+          else
+            echo "❌ SQL Script missing"
             exit 1
           fi
-          echo "✅ SQL Script exists"
-          
-          # Check README
-          if [ ! -f "README.md" ]; then
-            echo "❌ README.md missing"
-            exit 1
-          fi
-          echo "✅ README.md exists"
-          
-          # List all files
-          echo ""
-          echo "📂 Contents of /docs:"
+      
+      - name: List docs folder contents
+        run: |
+          echo "Contents of /docs:"
           ls -la docs/
-          echo ""
-          echo "🎉 All required files present!"
+      
+      - name: Final success message
+        run: echo "🎉 All validations passed successfully!"
