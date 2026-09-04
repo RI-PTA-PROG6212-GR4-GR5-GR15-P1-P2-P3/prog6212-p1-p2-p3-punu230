@@ -59,7 +59,7 @@ jobs:
         run: |
           echo "Contents of /docs:"
           ls -la docs/
-          
+          echo ""
       
       - name: Final success message
         run: |
