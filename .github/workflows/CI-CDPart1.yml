@@ -1,0 +1,74 @@
+name: CI/CD Part 1 - Validate Documentation
+
+on: [push, pull_request]
+
+jobs:
+  validate-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check docs folder
+        run: |
+          if [ -d "docs" ]; then
+            echo "✅ docs folder exists"
+          else
+            echo "❌ docs folder missing"
+            exit 1
+          fi
+      
+      - name: Check ERD file
+        run: |
+          if [ -f "docs/ERD.png" ] || [ -f "docs/ERD.pdf" ]; then
+            echo "✅ ERD file exists"
+          else
+            echo "❌ ERD file missing (expected ERD.png or ERD.pdf)"
+            exit 1
+          fi
+      
+      - name: Check API Endpoint Plan
+        run: |
+          if [ -f "docs/API-Endpoint-Plan.md" ] || [ -f "docs/API-Endpoint-Plan.pdf" ]; then
+            echo "✅ API Endpoint Plan exists"
+          else
+            echo "❌ API Endpoint Plan missing (expected API-Endpoint-Plan.md or API-Endpoint-Plan.pdf)"
+            exit 1
+          fi
+      
+      - name: Check SQL Script
+        run: |
+          if [ -f "docs/part1.sql" ]; then
+            echo "✅ SQL Script exists"
+          else
+            echo "❌ SQL Script missing (expected part1.sql)"
+            exit 1
+          fi
+      
+      - name: Check README
+        run: |
+          if [ -f "README.md" ]; then
+            echo "✅ README.md exists"
+          else
+            echo "❌ README.md missing"
+            exit 1
+          fi
+      
+      - name: List docs folder contents
+        run: |
+          echo "Contents of /docs:"
+          ls -la docs/
+          echo ""
+      
+      - name: Final success message
+        run: |
+          echo "========================================="
+          echo "🎉 ALL VALIDATIONS PASSED SUCCESSFULLY!"
+          echo "========================================="
+          echo "✅ docs folder exists"
+          echo "✅ ERD file exists"
+          echo "✅ API Endpoint Plan exists"
+          echo "✅ SQL Script exists"
+          echo "✅ README.md exists"
+          echo "=========================================" 
