@@ -43,10 +43,10 @@ jobs:
       
       - name: Check SQL Script
         run: |
-          if [ -f "docs/RaceDay-Database.sql" ]; then
+          if [ -f "docs/part1.sql" ]; then
             echo "✅ SQL Script exists"
           else
-            echo "❌ SQL Script missing (expected RaceDay-Database.sql)"
+            echo "❌ SQL Script missing (expected part1.sql)"
             exit 1
           fi
       
